@@ -56,6 +56,13 @@
                         <!-- Search results go here -->
                     </div>
                 </div>
+
+                <!-- Ozel Istek Button -->
+                <div style="padding: 20px; text-align: center; margin-bottom: 20px;">
+                    <button id="open-special-request-btn" class="btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #FF6B6B 0%, #C92A2A 100%);">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Özel İstek (İç İçe Geçme)
+                    </button>
+                </div>
             </div>
 
             <!-- PAGE: WAREHOUSE -->
@@ -216,6 +223,50 @@
             </ul>
         </nav>
 
+        <!-- SPECIAL REQUEST MODAL (POPUP) -->
+        <div class="modal-overlay" id="specialRequestModalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 style="font-size: 1.1rem;"><i class="fa-solid fa-wand-magic-sparkles"></i> İç/Dış Hesaplayıcı</h2>
+                    <button class="close-modal" id="closeSpecialRequestModal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Profil Tipi</label>
+                        <select class="form-input" id="sr-profile-type">
+                            <option value="Boru">Boru</option>
+                            <option value="Kutu">Kutu</option>
+                        </select>
+                        <small style="color: var(--text-secondary); font-size: 11px;">Not: Yalnızca içi boş profiller için çalışır.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Ölçünüz (Dış x Dış x Et Kalınlığı)</label>
+                        <input type="text" class="form-input" id="sr-profile-size" placeholder="Örn: 40x40x2 veya 30x5">
+                    </div>
+                    <div class="form-group">
+                        <label>Ne Arıyorsunuz?</label>
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <button id="sr-btn-inner" class="btn-secondary" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px 5px; gap: 5px; background: var(--bg-card); border: 2px solid transparent;">
+                                <i class="fa-solid fa-compress" style="font-size: 1.5rem; color: #4dabf7;"></i>
+                                <span style="font-size: 12px; font-weight: 500;">İÇİNE girecek</span>
+                            </button>
+                            <button id="sr-btn-outer" class="btn-secondary" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px 5px; gap: 5px; background: var(--bg-card); border: 2px solid transparent;">
+                                <i class="fa-solid fa-expand" style="font-size: 1.5rem; color: #ff8787;"></i>
+                                <span style="font-size: 12px; font-weight: 500;">DIŞINA geçecek</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="sr-request-mode" value="">
+                    </div>
+                    <div id="sr-results-container" style="display: none; margin-top: 15px;">
+                        <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--text-secondary);">Uygun Alternatifler (En yakın)</h3>
+                        <div id="sr-results-list" class="product-list" style="max-height: 250px; overflow-y: auto;">
+                            <!-- Results go here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- PRODUCT DETAILS MODAL (POPUP) -->
         <div class="modal-overlay" id="productModalOverlay">
             <div class="modal">
@@ -281,6 +332,6 @@
     <!-- Firebase SDKs (Compatibility Mode) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=10"></script>
+    <script src="app.js?v=12"></script>
 </body>
 </html>

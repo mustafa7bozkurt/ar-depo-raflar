@@ -4369,6 +4369,157 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Special Request Logic
+    const openSrBtn = document.getElementById('open-special-request-btn');
+    const closeSrModalBtn = document.getElementById('closeSpecialRequestModal');
+    const srModal = document.getElementById('specialRequestModalOverlay');
+    const btnInner = document.getElementById('sr-btn-inner');
+    const btnOuter = document.getElementById('sr-btn-outer');
+    const srProfileSizeInput = document.getElementById('sr-profile-size');
+
+    if (srProfileSizeInput) {
+        srProfileSizeInput.addEventListener('blur', () => {
+            let val = srProfileSizeInput.value.trim();
+            if(val.length > 0) {
+                val = val.replace(/\s+/g, 'x').replace(/x+/g, 'x');
+                srProfileSizeInput.value = val;
+            }
+        });
+    }
+    
+    if(openSrBtn) {
+        openSrBtn.addEventListener('click', () => {
+            srModal.classList.add('active');
+        });
+    }
+    
+    if(closeSrModalBtn) {
+        closeSrModalBtn.addEventListener('click', () => {
+            srModal.classList.remove('active');
+            document.getElementById('sr-results-container').style.display = 'none';
+        });
+    }
+
+    if (btnInner && btnOuter) {
+        btnInner.addEventListener('click', () => handleSpecialRequest('inner'));
+        btnOuter.addEventListener('click', () => handleSpecialRequest('outer'));
+    }
+
+    function handleSpecialRequest(mode) {
+        const type = document.getElementById('sr-profile-type').value;
+        const sizeInput = document.getElementById('sr-profile-size').value.trim();
+        const resultsContainer = document.getElementById('sr-results-container');
+        const resultsList = document.getElementById('sr-results-list');
+        
+        if(!sizeInput) {
+            alert('Lütfen bir ölçü girin!');
+            return;
+        }
+
+        const nums = sizeInput.match(/\d+(?:\.\d+)?/g);
+        if(!nums || nums.length < 2) {
+            alert('Lütfen geçerli bir ölçü ve et kalınlığı girin (Örn: 30x5 veya 40x40x2)');
+            return;
+        }
+        const parsedNums = nums.map(Number);
+        
+        let validCandidates = [];
+
+        state.products.forEach(p => {
+            if (p.profileType !== type) return; 
+
+            const pNums = p.size.match(/\d+(?:\.\d+)?/g);
+            if(!pNums || pNums.length < 2) return;
+            const pParsed = pNums.map(Number);
+
+            if (type === 'Kutu') {
+                if (parsedNums.length >= 2 && parsedNums[0] < parsedNums[1]) {
+                    let temp = parsedNums[0]; parsedNums[0] = parsedNums[1]; parsedNums[1] = temp;
+                }
+                if (pParsed.length >= 2 && pParsed[0] < pParsed[1]) {
+                    let temp = pParsed[0]; pParsed[0] = pParsed[1]; pParsed[1] = temp;
+                }
+                
+                const tA = parsedNums[0];
+                const tB = parsedNums.length === 2 ? parsedNums[0] : parsedNums[1];
+                const tThick = parsedNums.length === 2 ? parsedNums[1] : parsedNums[2];
+
+                const cA = pParsed[0];
+                const cB = pParsed.length === 2 ? pParsed[0] : pParsed[1];
+                const cThick = pParsed.length === 2 ? pParsed[1] : pParsed[2];
+
+                if (mode === 'inner') {
+                    const innerA = tA - (2 * tThick);
+                    const innerB = tB - (2 * tThick);
+                    if (cA <= innerA - 1 && cB <= innerB - 1) {
+                        const diffA = innerA - cA; 
+                        if (diffA <= 10) validCandidates.push({ product: p, diff: diffA });
+                    }
+                } else if (mode === 'outer') {
+                    const outerA = tA;
+                    const outerB = tB;
+                    const cInnerA = cA - (2 * cThick);
+                    const cInnerB = cB - (2 * cThick);
+                    if (cInnerA >= outerA + 1 && cInnerB >= outerB + 1) {
+                        const diffA = cInnerA - outerA; 
+                        if (diffA <= 10) validCandidates.push({ product: p, diff: diffA });
+                    }
+                }
+            } else if (type === 'Boru') {
+                const tA = parsedNums[0]; 
+                const tThick = parsedNums[1]; 
+
+                const cA = pParsed[0];
+                const cThick = pParsed[1];
+
+                if (mode === 'inner') {
+                    const innerDiam = tA - (2 * tThick);
+                    if (cA <= innerDiam - 1) {
+                        const diffA = innerDiam - cA;
+                        if (diffA <= 10) validCandidates.push({ product: p, diff: diffA });
+                    }
+                } else if (mode === 'outer') {
+                    const outerDiam = tA;
+                    const cInnerDiam = cA - (2 * cThick);
+                    if (cInnerDiam >= outerDiam + 1) {
+                        const diffA = cInnerDiam - outerDiam;
+                        if (diffA <= 10) validCandidates.push({ product: p, diff: diffA });
+                    }
+                }
+            }
+        });
+
+        validCandidates.sort((a, b) => a.diff - b.diff);
+
+        resultsList.innerHTML = '';
+        if (validCandidates.length === 0) {
+            resultsList.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><i class="fa-solid fa-face-frown" style="font-size: 2rem; margin-bottom: 10px;"></i><p>Depoda uygun ölçüde ürün bulunamadı.</p></div>';
+        } else {
+            validCandidates.forEach(cand => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-info">
+                        <h3>${escapeHTML(cand.product.name)}</h3>
+                        <p>Ölçü: <strong>${escapeHTML(cand.product.size)}</strong> | Boy: ${escapeHTML(cand.product.length)}</p>
+                        <p style="font-size: 12px; color: #4dabf7; margin-top: 4px; font-weight: 500;"><i class="fa-solid fa-arrows-left-right"></i> Tahmini Boşluk Payı: ${cand.diff} mm</p>
+                    </div>
+                    <div class="product-stock" style="text-align: right;">
+                        <div class="qty" style="font-size: 1.2rem;">${cand.product.qty}</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Adet</div>
+                    </div>
+                `;
+                card.addEventListener('click', () => {
+                    srModal.classList.remove('active');
+                    openProductModal(cand.product.id);
+                });
+                resultsList.appendChild(card);
+            });
+        }
+        
+        resultsContainer.style.display = 'block';
+    }
+
     function formatTimestamp(ts) {
         if (!ts) return "Bilgi Yok";
         const date = ts.toDate ? ts.toDate() : new Date(ts);
@@ -4381,7 +4532,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function escapeHTML(str) {
-        return str.replace(/[&<>'"]/g, 
+        if (str === null || str === undefined) return "";
+        return String(str).replace(/[&<>'"]/g, 
             tag => ({
                 '&': '&amp;',
                 '<': '&lt;',
