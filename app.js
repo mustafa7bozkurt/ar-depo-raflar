@@ -4092,6 +4092,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         exactMatches.sort((a, b) => {
+            const isPerfectA = checkDimensionsMatch(rawQuery, a.size, queryType || a.profileType);
+            const isPerfectB = checkDimensionsMatch(rawQuery, b.size, queryType || b.profileType);
+            
+            if (isPerfectA && !isPerfectB) return -1;
+            if (!isPerfectA && isPerfectB) return 1;
+
             const numsA = parseNums(a.size);
             const numsB = parseNums(b.size);
             
@@ -4175,8 +4181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const scoreB = getSimilarityScore(targetNums, parseNums(b.size), targetType || b.profileType);
                 return scoreA - scoreB;
             });
-            
-            similarMatches = candidates.slice(0, 4);
+            similarMatches = candidates.slice(0, 10);
         }
 
         let html = '';
