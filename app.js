@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalQtyPlus = document.getElementById('modal-qty-plus');
     const modalSaveBtn = document.getElementById('modal-action-save');
     const modalDeleteBtn = document.getElementById('modal-action-delete');
+    const modalPLastUpdated = document.getElementById('modal-p-last-updated');
 
     // Default Local State
     let defaultState = {
@@ -4211,7 +4212,8 @@ document.addEventListener('DOMContentLoaded', () => {
             length,
             weightPerMeter,
             location,
-            qty
+            qty,
+            lastUpdated: new Date()
         };
 
         db.collection('products').doc(newProduct.id.toString()).set(newProduct)
@@ -4254,6 +4256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalPLocation.textContent = product.location;
         
         modalQtyInput.value = product.qty;
+        modalPLastUpdated.textContent = formatTimestamp(product.lastUpdated);
         updateModalWeightDisplay();
 
         modalOverlay.classList.add('active');
@@ -4306,7 +4309,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedProductId === null) return;
         const newQty = parseInt(modalQtyInput.value) || 0;
         db.collection('products').doc(selectedProductId.toString()).update({
-            qty: newQty
+            qty: newQty,
+            lastUpdated: new Date()
         }).catch(err => {
             console.error("Error updating qty:", err);
         });
@@ -4324,6 +4328,17 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }
     });
+
+    function formatTimestamp(ts) {
+        if (!ts) return "Bilgi Yok";
+        const date = ts.toDate ? ts.toDate() : new Date(ts);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
+    }
 
     function escapeHTML(str) {
         return str.replace(/[&<>'"]/g, 
