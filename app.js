@@ -3819,10 +3819,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Sort by size (extract numbers, comparison dimensions)
         filtered.sort((a, b) => {
-            const parseNums = (sizeStr) => {
-                const matches = sizeStr.match(/\d+(?:\.\d+)?/g);
-                return matches ? matches.map(Number) : [];
-            };
             const numsA = parseNums(a.size);
             const numsB = parseNums(b.size);
             
@@ -4014,6 +4010,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchResults.style.display = 'block';
 
         const parseNums = (sizeStr) => {
+            if (!sizeStr) return [];
             const matches = sizeStr.match(/\d+(?:\.\d+)?/g);
             return matches ? matches.map(Number) : [];
         };
