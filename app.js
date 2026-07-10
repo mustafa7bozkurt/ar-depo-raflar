@@ -3819,6 +3819,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Sort by size (extract numbers, comparison dimensions)
         filtered.sort((a, b) => {
+            const parseNums = (sizeStr) => {
+                if (!sizeStr) return [];
+                const matches = sizeStr.match(/\d+(?:\.\d+)?/g);
+                return matches ? matches.map(Number) : [];
+            };
             const numsA = parseNums(a.size);
             const numsB = parseNums(b.size);
             
@@ -4129,20 +4134,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (type === 'Kutu' || type === 'Köşebent') {
                 const maxDimDiff = 5;
                 const maxThicknessDiff = 4;
-                const diffA = Math.abs((norm1[0] || 0) - (norm2[0] || 0));
-                const diffB = Math.abs((norm1[1] || 0) - (norm2[1] || 0));
-                const diffT = Math.abs((norm1[2] || 0) - (norm2[2] || 0));
-                return diffA <= maxDimDiff && diffB <= maxDimDiff && diffT <= maxThicknessDiff;
+                if (norm1[0] !== undefined && Math.abs(norm1[0] - (norm2[0] || 0)) > maxDimDiff) return false;
+                if (norm1[1] !== undefined && Math.abs(norm1[1] - (norm2[1] || 0)) > maxDimDiff) return false;
+                if (norm1[2] !== undefined && Math.abs(norm1[2] - (norm2[2] || 0)) > maxThicknessDiff) return false;
+                return true;
             } else if (type === 'Boru' || type === 'Lama') {
                 const maxDimDiff = 5;
                 const maxThicknessDiff = 4;
-                const diffA = Math.abs((norm1[0] || 0) - (norm2[0] || 0));
-                const diffT = Math.abs((norm1[1] || 0) - (norm2[1] || 0));
-                return diffA <= maxDimDiff && diffT <= maxThicknessDiff;
+                if (norm1[0] !== undefined && Math.abs(norm1[0] - (norm2[0] || 0)) > maxDimDiff) return false;
+                if (norm1[1] !== undefined && Math.abs(norm1[1] - (norm2[1] || 0)) > maxThicknessDiff) return false;
+                return true;
             } else {
                 const maxDimDiff = 5;
-                const diffA = Math.abs((norm1[0] || 0) - (norm2[0] || 0));
-                return diffA <= maxDimDiff;
+                if (norm1[0] !== undefined && Math.abs(norm1[0] - (norm2[0] || 0)) > maxDimDiff) return false;
+                return true;
             }
         };
 
