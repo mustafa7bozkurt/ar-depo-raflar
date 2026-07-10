@@ -4120,6 +4120,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return diff;
         };
 
+        const isWithinBounds = (targetNums, candidateNums, type) => {
+            const norm1 = getNormalizedNums(targetNums, type);
+            const norm2 = getNormalizedNums(candidateNums, type);
+            
+            if (norm1.length === 0 || norm2.length === 0) return false;
+            
+            if (type === 'Kutu' || type === 'Köşebent') {
+                const maxDimDiff = 5;
+                const maxThicknessDiff = 4;
+                const diffA = Math.abs((norm1[0] || 0) - (norm2[0] || 0));
+                const diffB = Math.abs((norm1[1] || 0) - (norm2[1] || 0));
+                const diffT = Math.abs((norm1[2] || 0) - (norm2[2] || 0));
+                return diffA <= maxDimDiff && diffB <= maxDimDiff && diffT <= maxThicknessDiff;
+            } else if (type === 'Boru' || type === 'Lama') {
+                const maxDimDiff = 5;
+                const maxThicknessDiff = 4;
+                const diffA = Math.abs((norm1[0] || 0) - (norm2[0] || 0));
+                const diffT = Math.abs((norm1[1] || 0) - (norm2[1] || 0));
+                return diffA <= maxDimDiff && diffT <= maxThicknessDiff;
+            } else {
+                const maxDimDiff = 5;
+                const diffA = Math.abs((norm1[0] || 0) - (norm2[0] || 0));
+                return diffA <= maxDimDiff;
+            }
+        };
+
         let targetType = null;
         let targetNums = [];
         
@@ -4135,7 +4161,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetNums.length > 0 || targetType) {
             const candidates = state.products.filter(p => 
                 (!targetType || p.profileType === targetType) &&
-                !exactMatches.some(em => em.id === p.id)
+                !exactMatches.some(em => em.id === p.id) &&
+                isWithinBounds(targetNums, parseNums(p.size), targetType || p.profileType)
             );
             
             candidates.sort((a, b) => {
