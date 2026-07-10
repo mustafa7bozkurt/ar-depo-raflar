@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MB Depo</title>
+    <!-- Outfit Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- PAGE: SEARCH (Landing Page) -->
+            <div id="page-search" class="page active">
+                <header class="header-container">
+                    <h1 class="logo-text">MB</h1>
+                    <p class="subtitle">Hayırlı, bol kazançlar!</p>
+                </header>
+
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" class="search-input" id="product-search" placeholder="Ürün, kod veya ölçü ara...">
+                        <i class="fa-solid fa-circle-xmark clear-search-icon" id="clear-search" style="display: none;"></i>
+                    </div>
+                </div>
+
+                <div id="search-results" class="results-container" style="display: none;">
+                    <h2 class="section-title">Benzer Ölçülü Ürünler</h2>
+                    <div id="results-list" class="product-list">
+                        <!-- Search results go here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE: WAREHOUSE -->
+            <div id="page-warehouse" class="page">
+                <header class="warehouse-header">
+                    <div class="tabs-container">
+                        <button class="tab-btn active" data-tab="list">Depo</button>
+                        <button class="tab-btn" data-tab="add">Ürün Kaydet</button>
+                    </div>
+                </header>
+
+                <!-- Sub-tab: List of Products -->
+                <div id="tab-list" class="tab-content active">
+                    <!-- MAIN DEPO VIEW (Profil & Raflar) -->
+                    <div id="view-depo-main" class="depo-view active">
+                        <div class="category-grid">
+                            <div class="category-card" data-category="profil">
+                                <i class="fa-solid fa-shapes"></i>
+                                <span>Profil Türleri</span>
+                            </div>
+                            <div class="category-card" data-category="raflar">
+                                <i class="fa-solid fa-layer-group"></i>
+                                <span>Raflar / Konumlar</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROFIL TYPES VIEW -->
+                    <div id="view-depo-profil-types" class="depo-view" style="display: none;">
+                        <div class="view-header">
+                            <button class="btn-back" data-back="main"><i class="fa-solid fa-chevron-left"></i> Geri</button>
+                            <h3>Profil Türleri</h3>
+                        </div>
+                        <div class="types-grid" id="profil-types-grid">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- RAF TYPES VIEW -->
+                    <div id="view-depo-raf-types" class="depo-view" style="display: none;">
+                        <div class="view-header">
+                            <button class="btn-back" data-back="main"><i class="fa-solid fa-chevron-left"></i> Geri</button>
+                            <h3>Raflar / Konumlar</h3>
+                        </div>
+                        <div class="types-grid" id="raf-types-grid">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- PRODUCTS LIST VIEW -->
+                    <div id="view-depo-products" class="depo-view" style="display: none;">
+                        <div class="view-header">
+                            <button class="btn-back" id="btn-back-to-types"><i class="fa-solid fa-chevron-left"></i> Geri</button>
+                            <h3 id="depo-products-title">Ürünler</h3>
+                        </div>
+                        <div class="empty-state" id="depo-empty-state" style="display: none;">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                            <p>Bu kategoride ürün bulunmuyor.</p>
+                        </div>
+                        <div id="warehouse-list" class="product-list">
+                            <!-- List of warehouse products -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-tab: Add Product -->
+                <div id="tab-add" class="tab-content">
+                    <div class="glass-card">
+                        <form id="add-product-form" onsubmit="event.preventDefault();">
+                            <div class="form-group">
+                                <label class="form-label">Profil Tipi</label>
+                                <select class="form-input" id="form-product-type" required>
+                                    <option value="" disabled selected>Seçiniz...</option>
+                                    <option value="Boru">Boru</option>
+                                    <option value="Kutu">Kutu Profil</option>
+                                    <option value="Köşebent">Köşebent (L)</option>
+                                    <option value="Lama">Lama</option>
+                                    <option value="Çubuk">Çubuk</option>
+                                    <option value="F">F Profil</option>
+                                    <option value="H">H Profil</option>
+                                    <option value="T">T Profil</option>
+                                    <option value="Levha">Levha / Sac</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ölçü / Boyut</label>
+                                <input type="text" class="form-input" id="form-product-size" placeholder="Örn: 60 60 2 veya 60x60x2" required>
+                                <span class="input-helper-text">Ölçülerin arasına sadece boşluk bırakabilirsiniz.</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Boy / Uzunluk (Metre)</label>
+                                <input type="number" step="0.01" class="form-input" id="form-product-length" value="6" placeholder="Örn: 6" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Metre Ağırlığı (kg/m)</label>
+                                <input type="number" step="0.001" class="form-input" id="form-product-weight-per-meter" placeholder="Örn: 1.257" required>
+                                <span class="input-helper-text" id="weight-helper">Ölçü girildiğinde teorik ağırlık otomatik hesaplanır.</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Konum / Raf No</label>
+                                <select class="form-input" id="form-product-location" required>
+<option value="" disabled selected>Seçiniz...</option>
+                                    <option value="Ön 1">Ön 1</option>
+                                    <option value="Ön 2">Ön 2</option>
+                                    <option value="Ön 3">Ön 3</option>
+                                    <option value="Ön 4">Ön 4</option>
+                                    <option value="Ön 5">Ön 5</option>
+                                    <option value="Ön 6">Ön 6</option>
+                                    <option value="Ön 7">Ön 7</option>
+                                    <option value="Arka 1">Arka 1</option>
+                                    <option value="Arka 2">Arka 2</option>
+                                    <option value="Arka 3">Arka 3</option>
+                                    <option value="Arka 4">Arka 4</option>
+                                    <option value="Arka 5">Arka 5</option>
+                                    <option value="Arka 6">Arka 6</option>
+                                    <option value="Arka 7">Arka 7</option>
+                                    <option value="Arka 8">Arka 8</option>
+                                    <option value="Arka 9">Arka 9</option>
+                                    <option value="Lama 1 SOL">Lama 1 SOL</option>
+                                    <option value="Lama 1 SAĞ">Lama 1 SAĞ</option>
+                                    <option value="Lama 2 SOL">Lama 2 SOL</option>
+                                    <option value="Lama 2 SAĞ">Lama 2 SAĞ</option>
+                                    <option value="Lama 3 SOL">Lama 3 SOL</option>
+                                    <option value="Lama 3 SAĞ">Lama 3 SAĞ</option>
+                                    <option value="ÜST ÖN">ÜST ÖN</option>
+                                    <option value="ÜST ARKA">ÜST ARKA</option>
+                                    <option value="Çubuk Sağ">Çubuk Sağ</option>
+                                    <option value="Çubuk Orta">Çubuk Orta</option>
+                                    <option value="Çubuk Sol">Çubuk Sol</option>
+                                    <option value="Fire Rafı">Fire Rafı</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Adet / Miktar</label>
+                                <input type="number" class="form-input" id="form-product-qty" placeholder="Örn: 150" required>
+                            </div>
+                            <button type="submit" class="btn-primary full-width" id="btn-save-product">
+                                <i class="fa-solid fa-plus"></i> Ürünü Kaydet
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <ul>
+                <li class="active" data-page="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Ürün Bul</span>
+                </li>
+                <li data-page="warehouse">
+                    <i class="fa-solid fa-warehouse"></i>
+                    <span>Depo</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- PRODUCT DETAILS MODAL (POPUP) -->
+        <div class="modal-overlay" id="productModalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="modal-product-title">Ürün Detayı</h2>
+                    <button class="close-modal" id="closeProductModal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Detail Fields -->
+                    <div class="detail-info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Ürün Adı</span>
+                            <span class="info-value" id="modal-p-name">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ölçü / Boyut</span>
+                            <span class="info-value" id="modal-p-size">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Boy / Uzunluk</span>
+                            <span class="info-value" id="modal-p-length">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Metre Ağırlığı</span>
+                            <span class="info-value" id="modal-p-weight-per-meter">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Konum / Raf No</span>
+                            <span class="info-value" id="modal-p-location">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Tahmini Kilo</span>
+                            <span class="info-value" id="modal-p-weight">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Quantity Editor Section -->
+                    <div class="qty-editor-section">
+                        <span class="info-label" style="text-align: center; display: block; margin-bottom: 12px;">Miktar / Adet Kontrolü</span>
+                        <div class="qty-controls">
+                            <button class="qty-btn btn-minus" id="modal-qty-minus"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" class="qty-input" id="modal-qty-input" value="0" min="0">
+                            <button class="qty-btn btn-plus" id="modal-qty-plus"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="modal-actions">
+                        <button class="btn-secondary" id="modal-action-save"><i class="fa-solid fa-check"></i> Kaydet</button>
+                        <button class="btn-danger" id="modal-action-delete"><i class="fa-solid fa-trash-can"></i> Ürünü Sil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDKs (Compatibility Mode) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="app.js?v=4"></script>
+</body>
+</html>
