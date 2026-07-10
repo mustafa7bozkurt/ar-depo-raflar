@@ -30,6 +30,24 @@
                         <input type="text" class="search-input" id="product-search" placeholder="Ürün, kod veya ölçü ara...">
                         <i class="fa-solid fa-circle-xmark clear-search-icon" id="clear-search" style="display: none;"></i>
                     </div>
+                    <!-- Type Filter Dropdown -->
+                    <div class="search-filter-box" style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 13px; color: var(--text-secondary); white-space: nowrap;"><i class="fa-solid fa-filter"></i> Profil Tipi:</span>
+                        <select class="form-input" id="search-product-type" style="margin: 0; padding: 8px 12px; font-size: 13px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-primary); cursor: pointer; flex-grow: 1;">
+                            <option value="" selected>Tümü (Filtre Yok)</option>
+                            <option value="Boru">Boru</option>
+                            <option value="Kutu">Kutu</option>
+                            <option value="Köşebent">Köşebent</option>
+                            <option value="Lama">Lama</option>
+                            <option value="Çubuk">Çubuk</option>
+                            <option value="F">F</option>
+                            <option value="H">H</option>
+                            <option value="T">T</option>
+                            <option value="Levha">Levha</option>
+                            <option value="U">U</option>
+                            <option value="Diğer">Diğer</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div id="search-results" class="results-container" style="display: none;">
@@ -263,6 +281,6 @@
     <!-- Firebase SDKs (Compatibility Mode) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=5"></script>
+    <script src="app.js?v=6"></script>
 </body>
 </html>

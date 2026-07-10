@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const searchInput = document.getElementById('product-search');
     const clearSearchBtn = document.getElementById('clear-search');
+    const searchProductType = document.getElementById('search-product-type');
     const searchResults = document.getElementById('search-results');
     const resultsList = document.getElementById('results-list');
 
@@ -4064,6 +4065,12 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (rawQuery.includes('t ')) queryType = 'T';
         else if (rawQuery.includes('levha')) queryType = 'Levha';
 
+        // Override with dropdown filter if selected
+        const dropdownType = searchProductType.value;
+        if (dropdownType) {
+            queryType = dropdownType;
+        }
+
         const formattedQuery = formatSizeInput(rawQuery, queryType);
 
         const exactMatches = state.products.filter(p => {
@@ -4182,6 +4189,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('input', (e) => {
         triggerSearch(e.target.value);
+    });
+
+    searchProductType.addEventListener('change', () => {
+        triggerSearch(searchInput.value);
     });
 
     clearSearchBtn.addEventListener('click', () => {
